@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Send, Mic, Camera, User, Bot, Sparkles } from 'lucide-react';
 import { aiService } from '../services/aiService';
+import ImageUpload from './ImageUpload';
 
 const ChatInterface = () => {
   const [messages, setMessages] = useState([
@@ -14,6 +15,7 @@ const ChatInterface = () => {
   ]);
   const [inputMessage, setInputMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [showImageUpload, setShowImageUpload] = useState(false);
   const messagesEndRef = useRef(null);
 
   const scrollToBottom = () => {
@@ -158,7 +160,10 @@ const ChatInterface = () => {
               <Mic className="w-4 h-4" />
               <span className="text-sm">Voice</span>
             </button>
-            <button className="flex items-center space-x-2 px-4 py-2 border border-green-300 rounded-full text-green-700 hover:bg-green-50 transition-colors">
+            <button 
+              onClick={() => setShowImageUpload(true)}
+              className="flex items-center space-x-2 px-4 py-2 border border-green-300 rounded-full text-green-700 hover:bg-green-50 transition-colors"
+            >
               <Camera className="w-4 h-4" />
               <span className="text-sm">Image</span>
             </button>
@@ -212,6 +217,23 @@ const ChatInterface = () => {
           </div>
         </div>
       </div>
+      
+      {showImageUpload && (
+        <ImageUpload
+          onAnalysisComplete={(analysis, imagePreview) => {
+            // Add analysis result to chat
+            const botMessage = {
+              id: Date.now(),
+              text: `🌿 **Plant Disease Analysis**\n\n**Detected**: ${analysis.disease}\n**Confidence**: ${analysis.confidence}%\n\n**Treatment**: ${analysis.treatment}\n\n**Organic Option**: ${analysis.organicTreatment}\n\n**Prevention**: ${analysis.prevention}`,
+              sender: 'bot',
+              timestamp: new Date()
+            };
+            setMessages(prev => [...prev, botMessage]);
+            setShowImageUpload(false);
+          }}
+          onClose={() => setShowImageUpload(false)}
+        />
+      )}
     </div>
   );
 };
