@@ -11,6 +11,7 @@ import connectDB from './config/database.js';
 
 // Routes
 import aiRoutes from './routes/aiRoutes.js';
+import imageRoutes from './routes/imageRoutes.js';
 
 dotenv.config();
 
@@ -46,6 +47,7 @@ connectDB();
 
 // API Routes
 app.use('/api/v1/ai', aiRoutes);
+app.use('/api/v1/images', imageRoutes);
 
 // Health Check
 app.get('/api/v1/health', (req, res) => {
