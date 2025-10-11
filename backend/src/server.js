@@ -1,10 +1,12 @@
+import dotenv from 'dotenv';
+dotenv.config();
+
 import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
 import compression from 'compression';
 import rateLimit from 'express-rate-limit';
 import morgan from 'morgan';
-import dotenv from 'dotenv';
 
 // Config
 import connectDB from './config/database.js';
@@ -13,7 +15,14 @@ import connectDB from './config/database.js';
 import aiRoutes from './routes/aiRoutes.js';
 import imageRoutes from './routes/imageRoutes.js';
 
-dotenv.config();
+// Debug environment variables
+console.log('🔧 Environment Debug:', {
+  NODE_ENV: process.env.NODE_ENV,
+  PORT: process.env.PORT,
+  GEMINI_KEY_EXISTS: !!process.env.GEMINI_API_KEY,
+  GEMINI_KEY_PREVIEW: process.env.GEMINI_API_KEY?.substring(0, 10) + '...',
+  OPENAI_KEY_EXISTS: !!process.env.OPENAI_API_KEY
+});
 
 const app = express();
 const PORT = process.env.PORT || 5000;

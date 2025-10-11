@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Send, Mic, Camera, User, Bot, Sparkles } from 'lucide-react';
 import { aiService } from '../services/aiService';
 import ImageUpload from './ImageUpload';
+import VoiceRecorder from './VoiceRecorder';
 
 const ChatInterface = () => {
   const [messages, setMessages] = useState([
@@ -16,6 +17,7 @@ const ChatInterface = () => {
   const [inputMessage, setInputMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [showImageUpload, setShowImageUpload] = useState(false);
+  const [showVoiceRecorder, setShowVoiceRecorder] = useState(false);
   const messagesEndRef = useRef(null);
 
   const scrollToBottom = () => {
@@ -156,7 +158,10 @@ const ChatInterface = () => {
       <div className="bg-white border-t border-green-200 px-4 py-4">
         <div className="max-w-4xl mx-auto">
           <div className="flex space-x-2 mb-3">
-            <button className="flex items-center space-x-2 px-4 py-2 border border-green-300 rounded-full text-green-700 hover:bg-green-50 transition-colors">
+            <button 
+              onClick={() => setShowVoiceRecorder(true)}
+              className="flex items-center space-x-2 px-4 py-2 border border-green-300 rounded-full text-green-700 hover:bg-green-50 transition-colors"
+            >
               <Mic className="w-4 h-4" />
               <span className="text-sm">Voice</span>
             </button>
@@ -232,6 +237,17 @@ const ChatInterface = () => {
             setShowImageUpload(false);
           }}
           onClose={() => setShowImageUpload(false)}
+        />
+      )}
+      
+      {showVoiceRecorder && (
+        <VoiceRecorder
+          onTranscriptComplete={(transcript) => {
+            // Set the voice transcript as input message
+            setInputMessage(transcript);
+            setShowVoiceRecorder(false);
+          }}
+          onClose={() => setShowVoiceRecorder(false)}
         />
       )}
     </div>
