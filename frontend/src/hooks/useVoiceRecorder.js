@@ -1,8 +1,10 @@
 import { useState, useRef, useEffect } from 'react';
 
-export const useVoiceRecorder = () => {
+export const useVoiceRecorder = (language = 'ml-IN') => {
   const [isRecording, setIsRecording] = useState(false);
   const [transcript, setTranscript] = useState('');
+  const [interimTranscript, setInterimTranscript] = useState('');
+  const [confidence, setConfidence] = useState(null);
   const [isSupported, setIsSupported] = useState(false);
   const recognitionRef = useRef(null);
 
@@ -17,36 +19,62 @@ export const useVoiceRecorder = () => {
       const recognition = recognitionRef.current;
       recognition.continuous = false;
       recognition.interimResults = true;
-      recognition.lang = 'ml-IN'; // Malayalam India
+      recognition.maxAlternatives = 3;
+      recognition.lang = language;
 
       recognition.onstart = () => {
         setIsRecording(true);
         setTranscript('');
+        setInterimTranscript('');
+        setConfidence(null);
       };
 
       recognition.onresult = (event) => {
         let finalTranscript = '';
-        let interimTranscript = '';
+        let currentInterimTranscript = '';
+        let highestConfidence = 0;
 
         for (let i = event.resultIndex; i < event.results.length; i++) {
-          const transcript = event.results[i][0].transcript;
-          if (event.results[i].isFinal) {
-            finalTranscript += transcript;
+          const result = event.results[i];
+          const transcriptText = result[0].transcript;
+          const confidenceScore = result[0].confidence;
+
+          if (result.isFinal) {
+            finalTranscript += transcriptText;
+            if (confidenceScore > highestConfidence) {
+              highestConfidence = confidenceScore;
+            }
           } else {
-            interimTranscript += transcript;
+            currentInterimTranscript += transcriptText;
           }
         }
 
-        setTranscript(finalTranscript || interimTranscript);
+        if (finalTranscript) {
+          setTranscript(finalTranscript);
+          setConfidence(highestConfidence);
+          setInterimTranscript('');
+        } else {
+          setInterimTranscript(currentInterimTranscript);
+        }
       };
 
       recognition.onerror = (event) => {
         console.error('Speech recognition error:', event.error);
         setIsRecording(false);
+        
+        // Provide user-friendly error messages
+        if (event.error === 'not-allowed') {
+          alert('🎤 Microphone access denied. Please allow microphone access and try again.');
+        } else if (event.error === 'no-speech') {
+          alert('🔇 No speech detected. Please speak louder or check your microphone.');
+        } else if (event.error === 'audio-capture') {
+          alert('🎤 Microphone not found. Please check your microphone connection.');
+        }
       };
 
       recognition.onend = () => {
         setIsRecording(false);
+        setInterimTranscript('');
       };
     } else {
       setIsSupported(false);
@@ -58,14 +86,22 @@ export const useVoiceRecorder = () => {
         recognitionRef.current.stop();
       }
     };
-  }, []);
+  }, [language]); // Add language as dependency
+
+  // Update language when it changes
+  useEffect(() => {
+    if (recognitionRef.current) {
+      recognitionRef.current.lang = language;
+    }
+  }, [language]);
 
   const startRecording = () => {
     if (recognitionRef.current && !isRecording) {
       try {
         recognitionRef.current.start();
       } catch (error) {
-        console.error('Failed to start recording:', error);
+        console.error('Error starting speech recognition:', error);
+        alert('Failed to start voice recording. Please try again.');
       }
     }
   };
@@ -78,11 +114,15 @@ export const useVoiceRecorder = () => {
 
   const resetTranscript = () => {
     setTranscript('');
+    setInterimTranscript('');
+    setConfidence(null);
   };
 
   return {
     isRecording,
     transcript,
+    interimTranscript,
+    confidence,
     isSupported,
     startRecording,
     stopRecording,
