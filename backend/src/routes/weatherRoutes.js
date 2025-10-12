@@ -111,4 +111,21 @@ router.get('/quick', async (req, res) => {
   }
 });
 
+// List all Kerala districts
+router.get('/districts', (req, res) => {
+  const districts = [
+    'thiruvananthapuram', 'kollam', 'pathanamthitta', 'alappuzha',
+    'kottayam', 'idukki', 'ernakulam', 'thrissur', 
+    'palakkad', 'malappuram', 'kozhikode', 'wayanad',
+    'kannur', 'kasaragod'
+  ];
+  
+  res.json({
+    success: true,
+    districts,
+    count: districts.length,
+    timestamp: new Date().toISOString()
+  });
+});
+
 export default router;
