@@ -4,6 +4,7 @@ import { Send, Mic, Camera, User, Bot, Sparkles } from 'lucide-react';
 import { aiService } from '../services/aiService';
 import ImageUpload from './ImageUpload';
 import VoiceRecorder from './VoiceRecorder';
+import WeatherWidget from './WeatherWidget';
 
 const ChatInterface = () => {
   const [messages, setMessages] = useState([
@@ -68,6 +69,12 @@ const ChatInterface = () => {
     }
   };
 
+  const handleWeatherQuestion = (weatherQuery) => {
+    setInputMessage(weatherQuery);
+    // Optionally auto-send the weather query
+    setTimeout(() => handleSend(), 100);
+  };
+
   const handleKeyPress = (e) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
@@ -76,19 +83,26 @@ const ChatInterface = () => {
   };
 
   return (
-    <div className="flex flex-col h-screen bg-gradient-to-br from-green-50 to-emerald-100">
-      {/* Header */}
-      <div className="bg-white border-b border-green-200 px-6 py-4 shadow-sm">
-        <div className="flex items-center space-x-3">
-          <div className="w-10 h-10 bg-gradient-to-r from-green-500 to-emerald-500 rounded-full flex items-center justify-center">
-            <Sparkles className="w-6 h-6 text-white" />
-          </div>
-          <div>
-            <h1 className="text-xl font-bold text-green-800">KrishiMitram AI</h1>
-            <p className="text-sm text-green-600">Your digital farming assistant</p>
+    <div className="flex h-screen bg-gradient-to-br from-green-50 to-emerald-100">
+      {/* Weather Sidebar */}
+      <div className="w-80 bg-white border-r border-green-200 p-4 overflow-y-auto">
+        <WeatherWidget onWeatherClick={handleWeatherQuestion} />
+      </div>
+      
+      {/* Main Chat Area */}
+      <div className="flex flex-col flex-1">
+        {/* Header */}
+        <div className="bg-white border-b border-green-200 px-6 py-4 shadow-sm">
+          <div className="flex items-center space-x-3">
+            <div className="w-10 h-10 bg-gradient-to-r from-green-500 to-emerald-500 rounded-full flex items-center justify-center">
+              <Sparkles className="w-6 h-6 text-white" />
+            </div>
+            <div>
+              <h1 className="text-xl font-bold text-green-800">KrishiMitram AI</h1>
+              <p className="text-sm text-green-600">Your digital farming assistant</p>
+            </div>
           </div>
         </div>
-      </div>
 
       {/* Messages Container */}
       <div className="flex-1 overflow-y-auto px-4 py-6 space-y-4">
@@ -250,6 +264,7 @@ const ChatInterface = () => {
           onClose={() => setShowVoiceRecorder(false)}
         />
       )}
+      </div>
     </div>
   );
 };

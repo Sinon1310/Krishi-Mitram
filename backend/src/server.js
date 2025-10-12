@@ -14,6 +14,7 @@ import connectDB from './config/database.js';
 // Routes
 import aiRoutes from './routes/aiRoutes.js';
 import imageRoutes from './routes/imageRoutes.js';
+import weatherRoutes from './routes/weatherRoutes.js';
 
 // Debug environment variables
 console.log('🔧 Environment Debug:', {
@@ -57,6 +58,7 @@ connectDB();
 // API Routes
 app.use('/api/v1/ai', aiRoutes);
 app.use('/api/v1/images', imageRoutes);
+app.use('/api/v1/weather', weatherRoutes);
 
 // Health Check
 app.get('/api/v1/health', (req, res) => {
