@@ -45,7 +45,9 @@ const ChatInterface = () => {
 
     try {
       // REAL AI INTEGRATION
+      console.log('🤖 Sending message to AI:', inputMessage);
       const aiResponse = await aiService.sendMessage(inputMessage);
+      console.log('✅ AI Response received:', aiResponse);
       
       const botMessage = {
         id: Date.now() + 1,
@@ -56,10 +58,11 @@ const ChatInterface = () => {
       
       setMessages(prev => [...prev, botMessage]);
     } catch (error) {
+      console.error('❌ Chat Error:', error);
       // Fallback response if AI fails
       const errorMessage = {
         id: Date.now() + 1,
-        text: "I'm here to help with farming questions! Try asking about:\n\n• Banana leaf spot disease\n• Rice planting season\n• Weather advice\n• Government subsidies\n\nYou can ask in Malayalam or English! �",
+        text: `Sorry, I'm having trouble connecting to the AI service. Error: ${error.message}\n\nPlease try again or ask about:\n• Banana leaf spot disease\n• Rice planting season\n• Weather advice\n• Government subsidies`,
         sender: 'bot',
         timestamp: new Date()
       };

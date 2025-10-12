@@ -146,11 +146,17 @@ class AIService {
                 {
                   text: `As KrishiMitram AI for Kerala farmers, provide helpful farming advice in the same language as this question: ${message}
                   
-                  Be practical, Kerala-specific, and mention organic options.`
+                  Be practical, Kerala-specific, and mention organic options when possible. Keep responses under 200 words.`
                 }
               ]
             }
           ]
+        },
+        {
+          timeout: 15000, // 15 second timeout
+          headers: {
+            'Content-Type': 'application/json'
+          }
         }
       );
 
