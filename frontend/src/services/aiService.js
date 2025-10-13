@@ -2,7 +2,7 @@ import axios from 'axios';
 
 const API_BASE_URL = import.meta.env.VITE_API_URL 
   ? `${import.meta.env.VITE_API_URL}/api/v1/ai`
-  : 'http://localhost:3003/api/v1/ai';
+  : 'https://krishi-mitram.onrender.com/api/v1/ai';
 
 export const aiService = {
   async sendMessage(message) {
