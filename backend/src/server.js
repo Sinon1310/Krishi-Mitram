@@ -93,8 +93,36 @@ app.use('*', (req, res) => {
   });
 });
 
+// Keep-alive mechanism for free tier hosting
+if (process.env.NODE_ENV === 'production') {
+  setInterval(() => {
+    // Self-ping to prevent Render from sleeping
+    const https = require('https');
+    const options = {
+      hostname: 'krishi-mitram.onrender.com',
+      port: 443,
+      path: '/api/v1/health',
+      method: 'GET'
+    };
+    
+    const req = https.request(options, (res) => {
+      console.log('🔄 Keep-alive ping sent, status:', res.statusCode);
+    });
+    
+    req.on('error', (err) => {
+      console.log('⚠️ Keep-alive ping failed:', err.message);
+    });
+    
+    req.end();
+  }, 14 * 60 * 1000); // Ping every 14 minutes
+}
+
 // Start Server
 app.listen(PORT, () => {
   console.log(`🚀 KrishiMitram Backend running on port ${PORT}`);
   console.log(`🌱 Environment: ${process.env.NODE_ENV || 'development'}`);
+  
+  if (process.env.NODE_ENV === 'production') {
+    console.log('🔄 Keep-alive mechanism activated for production');
+  }
 });
