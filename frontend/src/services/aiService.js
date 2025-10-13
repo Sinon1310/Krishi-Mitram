@@ -1,13 +1,13 @@
 import axios from 'axios';
 
-const API_BASE_URL = import.meta.env.VITE_API_URL 
-  ? `${import.meta.env.VITE_API_URL}/api/v1/ai`
-  : 'https://krishi-mitram.onrender.com/api/v1/ai';
+// Use production backend as primary, fallback to env var, then localhost
+const API_BASE_URL = 'https://krishi-mitram.onrender.com/api/v1/ai';
 
 export const aiService = {
   async sendMessage(message) {
     try {
       console.log('🚀 Sending message to AI:', message);
+      console.log('🔗 Using API URL:', API_BASE_URL);
       const response = await axios.post(`${API_BASE_URL}/chat`, {
         message
       }, {
