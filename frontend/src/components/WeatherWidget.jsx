@@ -2,6 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Cloud, Sun, CloudRain, CloudDrizzle, Navigation, Thermometer, Droplets, Wind } from 'lucide-react';
 
+// Get API base URL from environment
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'https://krishi-mitram.onrender.com';
+
 const WeatherWidget = ({ onWeatherClick }) => {
   const [weather, setWeather] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -31,7 +34,7 @@ const WeatherWidget = ({ onWeatherClick }) => {
   const fetchWeather = async () => {
     try {
       setLoading(true);
-      const response = await fetch(`/api/v1/weather/current/${district}`);
+      const response = await fetch(`${API_BASE_URL}/api/v1/weather/current/${district}`);
       const data = await response.json();
       
       if (data.success) {

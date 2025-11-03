@@ -1,15 +1,15 @@
 import axios from 'axios';
 
-// Use production backend as primary, fallback to env var, then localhost
-const API_BASE_URL = 'https://krishi-mitram.onrender.com/api/v1/ai';
+// Use environment variable with fallback to production backend
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'https://krishi-mitram.onrender.com';
 
 export const aiService = {
   async sendMessage(message) {
     try {
       console.log('🚀 Sending message to AI:', message);
-      console.log('🔗 Using API URL:', API_BASE_URL);
+      console.log('🔗 Using API URL:', `${API_BASE_URL}/api/v1/ai`);
       
-      const response = await axios.post(`${API_BASE_URL}/chat`, {
+      const response = await axios.post(`${API_BASE_URL}/api/v1/ai/chat`, {
         message
       }, {
         timeout: 45000, // Increased to 45 seconds for cold starts
@@ -25,7 +25,7 @@ export const aiService = {
         message: error.message,
         status: error.response?.status,
         data: error.response?.data,
-        url: `${API_BASE_URL}/chat`
+        url: `${API_BASE_URL}/api/v1/ai/chat`
       });
       
       // Provide more specific error messages

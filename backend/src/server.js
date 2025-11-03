@@ -39,15 +39,20 @@ const limiter = rateLimit({
 });
 app.use(limiter);
 
-// CORS
+// CORS - Enhanced configuration for production
 app.use(cors({
   origin: [
     'http://localhost:3000',
     'http://localhost:5173',
     'https://krishi-mitram-wheat.vercel.app',
+    'https://krishi-mitram.vercel.app',
     process.env.FRONTEND_URL
   ].filter(Boolean),
-  credentials: true
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
+  preflightContinue: false,
+  optionsSuccessStatus: 200
 }));
 
 // Logging
@@ -59,6 +64,15 @@ app.use(express.urlencoded({ extended: true }));
 
 // Database Connection
 connectDB();
+
+// Handle preflight OPTIONS requests explicitly
+app.options('*', (req, res) => {
+  res.header('Access-Control-Allow-Origin', req.headers.origin);
+  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With');
+  res.header('Access-Control-Allow-Credentials', 'true');
+  res.sendStatus(200);
+});
 
 // API Routes
 app.use('/api/v1/ai', aiRoutes);
